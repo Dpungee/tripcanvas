@@ -1,92 +1,65 @@
-import { USState } from '@/types'
+// src/data/states.ts
+// All 50 US states with hero images, descriptions, and destination references
 
-export const states: USState[] = [
-  {
-    id: 'florida',
-    name: 'Florida',
-    abbreviation: 'FL',
-    heroImage: 'https://images.unsplash.com/photo-1535498730771-e735b998cd64?w=1200&q=80',
-    description: 'The Sunshine State offers world-class beaches, legendary nightlife, and endless entertainment from Miami to Key West.',
-    destinations: ['miami', 'orlando', 'tampa', 'key-west', 'naples'],
-    budgetRange: { low: 120, high: 500 },
-    highlights: ['South Beach', 'Disney World', 'Everglades', 'Key West Sunsets'],
-  },
-  {
-    id: 'california',
-    name: 'California',
-    abbreviation: 'CA',
-    heroImage: 'https://images.unsplash.com/photo-1449034446853-66c86144b0ad?w=1200&q=80',
-    description: 'From Hollywood glamour to Napa wine country, California delivers an unmatched mix of culture, nature, and luxury.',
-    destinations: ['los-angeles', 'san-diego', 'palm-springs', 'napa', 'san-francisco'],
-    budgetRange: { low: 150, high: 600 },
-    highlights: ['Hollywood', 'Golden Gate Bridge', 'Napa Valley', 'Pacific Coast Highway'],
-  },
-  {
-    id: 'new-york',
-    name: 'New York',
-    abbreviation: 'NY',
-    heroImage: 'https://images.unsplash.com/photo-1534430480872-3498386e7856?w=1200&q=80',
-    description: 'The Empire State has it all — from the electric energy of NYC to the serene beauty of the Hudson Valley and Hamptons.',
-    destinations: ['nyc', 'hamptons', 'hudson-valley'],
-    budgetRange: { low: 180, high: 700 },
-    highlights: ['Times Square', 'Central Park', 'Hamptons Beaches', 'Hudson Valley Wineries'],
-  },
-  {
-    id: 'texas',
-    name: 'Texas',
-    abbreviation: 'TX',
-    heroImage: 'https://images.unsplash.com/photo-1570089858715-590b37649de6?w=1200&q=80',
-    description: 'Everything is bigger in Texas — the live music, the BBQ, the nightlife, and the unforgettable road trip destinations.',
-    destinations: ['austin', 'dallas', 'houston', 'san-antonio'],
-    budgetRange: { low: 100, high: 400 },
-    highlights: ['6th Street Austin', 'San Antonio Riverwalk', 'Texas BBQ', 'Space Center Houston'],
-  },
-  {
-    id: 'nevada',
-    name: 'Nevada',
-    abbreviation: 'NV',
-    heroImage: 'https://images.unsplash.com/photo-1581351721010-8cf859cb14a4?w=1200&q=80',
-    description: 'Home to Las Vegas and beyond, Nevada is the ultimate destination for bachelor parties, luxury getaways, and adventure seekers.',
-    destinations: ['las-vegas', 'reno', 'lake-tahoe-nv'],
-    budgetRange: { low: 130, high: 800 },
-    highlights: ['The Strip', 'Lake Tahoe', 'Red Rock Canyon', 'Reno Arts District'],
-  },
-  {
-    id: 'tennessee',
-    name: 'Tennessee',
-    abbreviation: 'TN',
-    heroImage: 'https://images.unsplash.com/photo-1545419913-ec99d5e4fe02?w=1200&q=80',
-    description: 'Music City and Memphis blues, plus the Great Smoky Mountains — Tennessee serves up culture, nightlife, and nature.',
-    destinations: ['nashville', 'memphis', 'gatlinburg'],
-    budgetRange: { low: 90, high: 350 },
-    highlights: ['Broadway Nashville', 'Beale Street', 'Great Smoky Mountains', 'Honky Tonks'],
-  },
-  {
-    id: 'arizona',
-    name: 'Arizona',
-    abbreviation: 'AZ',
-    heroImage: 'https://images.unsplash.com/photo-1474044159687-1ee9f3a51722?w=1200&q=80',
-    description: 'Desert luxury meets red rock beauty — from Scottsdale spas to Sedona hikes, Arizona is a wellness and adventure paradise.',
-    destinations: ['scottsdale', 'sedona', 'phoenix'],
-    budgetRange: { low: 110, high: 450 },
-    highlights: ['Scottsdale Spas', 'Sedona Red Rocks', 'Grand Canyon', 'Desert Golf'],
-  },
-  {
-    id: 'colorado',
-    name: 'Colorado',
-    abbreviation: 'CO',
-    heroImage: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1200&q=80',
-    description: 'Mountain highs and craft brew culture — Colorado is perfect for adventure seekers, ski trips, and outdoor lovers.',
-    destinations: ['denver', 'aspen', 'boulder', 'colorado-springs'],
-    budgetRange: { low: 120, high: 550 },
-    highlights: ['Rocky Mountains', 'Aspen Skiing', 'Red Rocks Amphitheatre', 'Craft Breweries'],
-  },
-]
+export const states = [
+  { id: 'alabama', name: 'Alabama', abbreviation: 'AL', heroImage: 'https://images.unsplash.com/photo-1578301978018-3005759f48f7?w=800&q=80&fit=crop', description: 'Sweet home Alabama — Gulf Coast beaches, civil rights history, and a rising food scene in Birmingham.', destinations: ['birmingham-al', 'gulf-shores-al'], budgetRange: { low: 100, high: 300 }, highlights: ['Gulf Shores beaches', 'Birmingham food scene', 'Civil Rights Trail'] },
+  { id: 'alaska', name: 'Alaska', abbreviation: 'AK', heroImage: 'https://images.unsplash.com/photo-1503095396549-807759245b35?w=800&q=80&fit=crop', description: 'The Last Frontier — glaciers, wildlife, Northern Lights, and unmatched wilderness adventures.', destinations: ['anchorage', 'juneau'], budgetRange: { low: 150, high: 500 }, highlights: ['Glacier viewing', 'Northern Lights', 'Whale watching'] },
+  { id: 'arizona', name: 'Arizona', abbreviation: 'AZ', heroImage: 'https://images.unsplash.com/photo-1558645836-e44122a743ee?w=800&q=80&fit=crop', description: 'Desert beauty, world-class spas, red rock wonders, and vibrant cities under endless sunshine.', destinations: ['scottsdale', 'sedona', 'phoenix'], budgetRange: { low: 120, high: 500 }, highlights: ['Scottsdale spas', 'Sedona red rocks', 'Desert hiking'] },
+  { id: 'arkansas', name: 'Arkansas', abbreviation: 'AR', heroImage: 'https://images.unsplash.com/photo-1544735716-ea9ef790f501?w=800&q=80&fit=crop', description: 'The Natural State — hot springs, crystal bridges, mountain biking, and Southern hospitality.', destinations: ['hot-springs-ar', 'bentonville'], budgetRange: { low: 80, high: 300 }, highlights: ['Hot Springs National Park', 'Crystal Bridges Museum', 'Mountain biking'] },
+  { id: 'california', name: 'California', abbreviation: 'CA', heroImage: 'https://images.unsplash.com/photo-1449034446853-66c86144b0ad?w=800&q=80&fit=crop', description: 'From Hollywood glamour to Napa wine country, California offers world-class beaches, food, and culture.', destinations: ['los-angeles', 'san-diego', 'palm-springs', 'napa', 'san-francisco'], budgetRange: { low: 150, high: 600 }, highlights: ['Hollywood', 'Wine country', 'Pacific Coast Highway'] },
+  { id: 'colorado', name: 'Colorado', abbreviation: 'CO', heroImage: 'https://images.unsplash.com/photo-1619856699906-09e1f4ef89c7?w=800&q=80&fit=crop', description: 'Rocky Mountain highs — world-class skiing, craft beer, outdoor adventures, and vibrant cities.', destinations: ['denver', 'aspen', 'boulder', 'colorado-springs'], budgetRange: { low: 120, high: 600 }, highlights: ['Rocky Mountain skiing', 'Craft beer scene', 'Garden of the Gods'] },
+  { id: 'connecticut', name: 'Connecticut', abbreviation: 'CT', heroImage: 'https://images.unsplash.com/photo-1504870712952-ff60f5118b29?w=800&q=80&fit=crop', description: 'New England charm — coastal seaports, Yale University, incredible pizza, and autumn foliage.', destinations: ['mystic-ct', 'new-haven'], budgetRange: { low: 120, high: 400 }, highlights: ['Mystic Seaport', 'New Haven pizza', 'Fall foliage'] },
+  { id: 'delaware', name: 'Delaware', abbreviation: 'DE', heroImage: 'https://images.unsplash.com/photo-1519046904884-53103b34b206?w=800&q=80&fit=crop', description: 'The First State — boardwalk beaches, tax-free shopping, and Brandywine Valley gardens.', destinations: ['rehoboth-beach', 'wilmington-de'], budgetRange: { low: 100, high: 350 }, highlights: ['Rehoboth boardwalk', 'Tax-free shopping', 'Winterthur gardens'] },
+  { id: 'florida', name: 'Florida', abbreviation: 'FL', heroImage: 'https://images.unsplash.com/photo-1535498730771-e735b998cd64?w=800&q=80&fit=crop', description: 'The Sunshine State offers world-class beaches, legendary nightlife, and endless entertainment from Miami to Key West.', destinations: ['miami', 'orlando', 'tampa', 'key-west', 'naples'], budgetRange: { low: 120, high: 500 }, highlights: ['South Beach nightlife', 'Key West sunsets', 'Theme parks'] },
+  { id: 'georgia', name: 'Georgia', abbreviation: 'GA', heroImage: 'https://images.unsplash.com/photo-1530639834082-05bafb67fbbe?w=800&q=80&fit=crop', description: 'Southern charm meets modern energy — from Savannah\'s squares to Atlanta\'s hip-hop culture.', destinations: ['savannah', 'atlanta'], budgetRange: { low: 120, high: 400 }, highlights: ['Savannah squares', 'Atlanta BeltLine', 'Southern cuisine'] },
+  { id: 'hawaii', name: 'Hawaii', abbreviation: 'HI', heroImage: 'https://images.unsplash.com/photo-1507876466758-bc54f384809c?w=800&q=80&fit=crop', description: 'Paradise found — volcanic landscapes, pristine beaches, world-class snorkeling, and aloha spirit.', destinations: ['honolulu', 'maui'], budgetRange: { low: 200, high: 700 }, highlights: ['Waikiki Beach', 'Road to Hana', 'Snorkeling'] },
+  { id: 'idaho', name: 'Idaho', abbreviation: 'ID', heroImage: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80&fit=crop', description: 'Gem State adventures — skiing, hot springs, river rafting, and a surprisingly vibrant food scene.', destinations: ['boise', 'sun-valley'], budgetRange: { low: 100, high: 450 }, highlights: ['Sun Valley skiing', 'Boise River Greenbelt', 'Sawtooth Mountains'] },
+  { id: 'illinois', name: 'Illinois', abbreviation: 'IL', heroImage: 'https://images.unsplash.com/photo-1494522855154-9297ac14b55f?w=800&q=80&fit=crop', description: 'The Prairie State — Chicago\'s world-class food and culture plus charming small towns.', destinations: ['chicago', 'galena'], budgetRange: { low: 100, high: 500 }, highlights: ['Deep-dish pizza', 'Architecture tours', 'Jazz and blues clubs'] },
+  { id: 'indiana', name: 'Indiana', abbreviation: 'IN', heroImage: 'https://images.unsplash.com/photo-1569317002804-ab77bcf1bce4?w=800&q=80&fit=crop', description: 'The Crossroads of America — the Indy 500, craft beer, and vibrant college towns.', destinations: ['indianapolis', 'bloomington-in'], budgetRange: { low: 80, high: 300 }, highlights: ['Indianapolis 500', 'Craft beer scene', 'Indiana Dunes'] },
+  { id: 'iowa', name: 'Iowa', abbreviation: 'IA', heroImage: 'https://images.unsplash.com/photo-1517457373958-b7bdd4587205?w=800&q=80&fit=crop', description: 'Heartland hospitality — surprising food scenes, river bluffs, and friendly Midwestern charm.', destinations: ['des-moines', 'dubuque'], budgetRange: { low: 70, high: 250 }, highlights: ['Des Moines food scene', 'Mississippi River bluffs', 'State Fair'] },
+  { id: 'kansas', name: 'Kansas', abbreviation: 'KS', heroImage: 'https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=800&q=80&fit=crop', description: 'The Sunflower State — world-famous BBQ, passionate sports, and wide-open prairies.', destinations: ['kansas-city-ks', 'wichita'], budgetRange: { low: 70, high: 300 }, highlights: ['World-class BBQ', 'Tallgrass Prairie', 'Aviation museums'] },
+  { id: 'kentucky', name: 'Kentucky', abbreviation: 'KY', heroImage: 'https://images.unsplash.com/photo-1584466977773-e625c37cdd50?w=800&q=80&fit=crop', description: 'Bluegrass beauty — bourbon, horse country, the Kentucky Derby, and Southern food at its finest.', destinations: ['louisville', 'lexington'], budgetRange: { low: 90, high: 350 }, highlights: ['Bourbon Trail', 'Kentucky Derby', 'Horse country'] },
+  { id: 'louisiana', name: 'Louisiana', abbreviation: 'LA', heroImage: 'https://images.unsplash.com/photo-1568402102990-bc541580b59f?w=800&q=80&fit=crop', description: 'Laissez les bons temps rouler — jazz, Cajun cuisine, Mardi Gras, and a culture of celebration.', destinations: ['new-orleans', 'baton-rouge'], budgetRange: { low: 100, high: 400 }, highlights: ['French Quarter', 'Cajun cuisine', 'Mardi Gras'] },
+  { id: 'maine', name: 'Maine', abbreviation: 'ME', heroImage: 'https://images.unsplash.com/photo-1530543787849-128d94430c6b?w=800&q=80&fit=crop', description: 'Vacationland — rugged coastlines, lobster shacks, lighthouses, and Acadia National Park.', destinations: ['portland-me', 'bar-harbor'], budgetRange: { low: 120, high: 400 }, highlights: ['Lobster', 'Acadia National Park', 'Rocky coastline'] },
+  { id: 'maryland', name: 'Maryland', abbreviation: 'MD', heroImage: 'https://images.unsplash.com/photo-1569317002804-ab77bcf1bce4?w=800&q=80&fit=crop', description: 'The Old Line State — crab feasts, sailing, colonial history, and the Chesapeake Bay.', destinations: ['baltimore', 'annapolis'], budgetRange: { low: 120, high: 400 }, highlights: ['Crab cakes', 'Chesapeake Bay sailing', 'Inner Harbor'] },
+  { id: 'massachusetts', name: 'Massachusetts', abbreviation: 'MA', heroImage: 'https://images.unsplash.com/photo-1501979376754-2ff867a4f659?w=800&q=80&fit=crop', description: 'The Bay State — Revolutionary history, world-class seafood, elite universities, and Cape Cod beaches.', destinations: ['boston', 'cape-cod'], budgetRange: { low: 150, high: 500 }, highlights: ['Freedom Trail', 'Cape Cod beaches', 'Seafood'] },
+  { id: 'michigan', name: 'Michigan', abbreviation: 'MI', heroImage: 'https://images.unsplash.com/photo-1527168027773-0cc890c4f42e?w=800&q=80&fit=crop', description: 'The Great Lakes State — Motor City culture, cherry orchards, sand dunes, and wine trails.', destinations: ['detroit', 'traverse-city'], budgetRange: { low: 100, high: 400 }, highlights: ['Motown history', 'Cherry festivals', 'Great Lakes beaches'] },
+  { id: 'minnesota', name: 'Minnesota', abbreviation: 'MN', heroImage: 'https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=800&q=80&fit=crop', description: 'Land of 10,000 Lakes — vibrant arts, legendary music history, and stunning natural beauty.', destinations: ['minneapolis', 'duluth'], budgetRange: { low: 100, high: 400 }, highlights: ['Prince legacy', 'Lake Superior', 'Arts scene'] },
+  { id: 'mississippi', name: 'Mississippi', abbreviation: 'MS', heroImage: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800&q=80&fit=crop', description: 'The Magnolia State — literary heritage, Gulf Coast beaches, and authentic Southern culture.', destinations: ['oxford-ms', 'biloxi'], budgetRange: { low: 70, high: 300 }, highlights: ['Literary heritage', 'Gulf Coast casinos', 'Delta blues'] },
+  { id: 'missouri', name: 'Missouri', abbreviation: 'MO', heroImage: 'https://images.unsplash.com/photo-1569317002804-ab77bcf1bce4?w=800&q=80&fit=crop', description: 'The Show-Me State — the Gateway Arch, world-class BBQ, Ozark lakes, and live entertainment.', destinations: ['st-louis', 'branson'], budgetRange: { low: 80, high: 350 }, highlights: ['Gateway Arch', 'BBQ', 'Ozark lakes'] },
+  { id: 'montana', name: 'Montana', abbreviation: 'MT', heroImage: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80&fit=crop', description: 'Big Sky Country — Glacier National Park, Yellowstone, fly-fishing, and wide-open mountain beauty.', destinations: ['whitefish', 'bozeman'], budgetRange: { low: 120, high: 450 }, highlights: ['Glacier National Park', 'Yellowstone access', 'Fly-fishing'] },
+  { id: 'nebraska', name: 'Nebraska', abbreviation: 'NE', heroImage: 'https://images.unsplash.com/photo-1517457373958-b7bdd4587205?w=800&q=80&fit=crop', description: 'The Cornhusker State — Omaha\'s incredible food, Husker football, and friendly Midwestern vibes.', destinations: ['omaha', 'lincoln-ne'], budgetRange: { low: 70, high: 280 }, highlights: ['Omaha steaks', 'Henry Doorly Zoo', 'College football'] },
+  { id: 'nevada', name: 'Nevada', abbreviation: 'NV', heroImage: 'https://images.unsplash.com/photo-1605833556294-ea5c7a74f57d?w=800&q=80&fit=crop', description: 'The Silver State — Vegas nightlife, Lake Tahoe beauty, and desert adventures under neon lights.', destinations: ['las-vegas', 'reno', 'lake-tahoe-nv'], budgetRange: { low: 100, high: 600 }, highlights: ['Las Vegas Strip', 'Lake Tahoe', 'Desert landscapes'] },
+  { id: 'new-hampshire', name: 'New Hampshire', abbreviation: 'NH', heroImage: 'https://images.unsplash.com/photo-1472396961693-142e6e269027?w=800&q=80&fit=crop', description: 'Live Free or Die — White Mountains, coastal charm, fall foliage, and tax-free shopping.', destinations: ['portsmouth-nh', 'north-conway'], budgetRange: { low: 100, high: 400 }, highlights: ['White Mountains', 'Fall foliage', 'Coastal dining'] },
+  { id: 'new-jersey', name: 'New Jersey', abbreviation: 'NJ', heroImage: 'https://images.unsplash.com/photo-1519046904884-53103b34b206?w=800&q=80&fit=crop', description: 'The Garden State — revitalized shore towns, Victorian beach resorts, and world-class dining.', destinations: ['asbury-park', 'cape-may'], budgetRange: { low: 120, high: 400 }, highlights: ['Jersey Shore', 'Victorian Cape May', 'Boardwalks'] },
+  { id: 'new-mexico', name: 'New Mexico', abbreviation: 'NM', heroImage: 'https://images.unsplash.com/photo-1500534623283-312aade485b7?w=800&q=80&fit=crop', description: 'The Land of Enchantment — adobe architecture, world-class art, spiritual deserts, and green chile.', destinations: ['santa-fe', 'albuquerque'], budgetRange: { low: 100, high: 400 }, highlights: ['Santa Fe art', 'Hot air balloons', 'Green chile cuisine'] },
+  { id: 'new-york', name: 'New York', abbreviation: 'NY', heroImage: 'https://images.unsplash.com/photo-1534430480872-3498386e7856?w=800&q=80&fit=crop', description: 'The Empire State has it all — from the electric energy of NYC to the tranquil beauty of the Hudson Valley.', destinations: ['nyc', 'hamptons', 'hudson-valley'], budgetRange: { low: 180, high: 700 }, highlights: ['Times Square', 'Hamptons beaches', 'Hudson Valley farms'] },
+  { id: 'north-carolina', name: 'North Carolina', abbreviation: 'NC', heroImage: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80&fit=crop', description: 'First in Flight — Blue Ridge Mountains, craft beer capital, barrier island beaches, and BBQ.', destinations: ['asheville', 'outer-banks'], budgetRange: { low: 100, high: 400 }, highlights: ['Asheville breweries', 'Blue Ridge Parkway', 'Outer Banks beaches'] },
+  { id: 'north-dakota', name: 'North Dakota', abbreviation: 'ND', heroImage: 'https://images.unsplash.com/photo-1500534623283-312aade485b7?w=800&q=80&fit=crop', description: 'The Peace Garden State — painted badlands, wide-open prairies, and surprising college-town culture.', destinations: ['fargo', 'medora'], budgetRange: { low: 60, high: 250 }, highlights: ['Theodore Roosevelt NP', 'Badlands', 'College-town charm'] },
+  { id: 'ohio', name: 'Ohio', abbreviation: 'OH', heroImage: 'https://images.unsplash.com/photo-1569317002804-ab77bcf1bce4?w=800&q=80&fit=crop', description: 'The Buckeye State — Rock and Roll, renaissance food scenes, and vibrant arts districts.', destinations: ['columbus-oh', 'cleveland'], budgetRange: { low: 80, high: 350 }, highlights: ['Rock Hall of Fame', 'Short North arts', 'Lake Erie'] },
+  { id: 'oklahoma', name: 'Oklahoma', abbreviation: 'OK', heroImage: 'https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=800&q=80&fit=crop', description: 'Where the wind comes sweeping — Route 66 history, Western heritage, and growing food scenes.', destinations: ['oklahoma-city', 'tulsa'], budgetRange: { low: 70, high: 280 }, highlights: ['Route 66', 'Gathering Place', 'Western museums'] },
+  { id: 'oregon', name: 'Oregon', abbreviation: 'OR', heroImage: 'https://images.unsplash.com/photo-1541188495357-ad2dc89487f4?w=800&q=80&fit=crop', description: 'Keep it weird — food carts, craft beer, dramatic coastline, mountain skiing, and creative culture.', destinations: ['portland-or', 'bend'], budgetRange: { low: 120, high: 400 }, highlights: ['Portland food carts', 'Crater Lake', 'Craft beer'] },
+  { id: 'pennsylvania', name: 'Pennsylvania', abbreviation: 'PA', heroImage: 'https://images.unsplash.com/photo-1569317002804-ab77bcf1bce4?w=800&q=80&fit=crop', description: 'The Keystone State — Revolutionary history, cheesesteaks, Pocono mountains, and world-class museums.', destinations: ['philadelphia', 'poconos'], budgetRange: { low: 100, high: 400 }, highlights: ['Liberty Bell', 'Cheesesteaks', 'Pocono resorts'] },
+  { id: 'rhode-island', name: 'Rhode Island', abbreviation: 'RI', heroImage: 'https://images.unsplash.com/photo-1515238152791-8216bfdf89a7?w=800&q=80&fit=crop', description: 'The Ocean State — Gilded Age mansions, incredible food, sailing culture, and coastal charm.', destinations: ['newport-ri', 'providence'], budgetRange: { low: 120, high: 450 }, highlights: ['Newport mansions', 'Cliff Walk', 'Federal Hill dining'] },
+  { id: 'south-carolina', name: 'South Carolina', abbreviation: 'SC', heroImage: 'https://images.unsplash.com/photo-1530639834082-05bafb67fbbe?w=800&q=80&fit=crop', description: 'The Palmetto State — Charleston\'s cobblestones, Hilton Head golf, Lowcountry cuisine, and Southern grace.', destinations: ['charleston', 'hilton-head'], budgetRange: { low: 120, high: 450 }, highlights: ['Charleston dining', 'Hilton Head golf', 'Lowcountry cuisine'] },
+  { id: 'south-dakota', name: 'South Dakota', abbreviation: 'SD', heroImage: 'https://images.unsplash.com/photo-1500534623283-312aade485b7?w=800&q=80&fit=crop', description: 'Mount Rushmore State — Black Hills, Badlands, Wild West history, and dramatic landscapes.', destinations: ['deadwood', 'rapid-city'], budgetRange: { low: 70, high: 300 }, highlights: ['Mount Rushmore', 'Badlands NP', 'Deadwood history'] },
+  { id: 'tennessee', name: 'Tennessee', abbreviation: 'TN', heroImage: 'https://images.unsplash.com/photo-1545419913-0bf4c12d197d?w=800&q=80&fit=crop', description: 'The Volunteer State — Nashville honky tonks, Memphis blues, Smoky Mountain cabins, and hot chicken.', destinations: ['nashville', 'memphis', 'gatlinburg'], budgetRange: { low: 100, high: 400 }, highlights: ['Broadway honky tonks', 'Beale Street blues', 'Great Smoky Mountains'] },
+  { id: 'texas', name: 'Texas', abbreviation: 'TX', heroImage: 'https://images.unsplash.com/photo-1570089858715-5aca1d316418?w=800&q=80&fit=crop', description: 'Everything is bigger in Texas — the live music, the BBQ, the nightlife, and the wide-open spaces.', destinations: ['austin', 'dallas', 'houston', 'san-antonio'], budgetRange: { low: 100, high: 400 }, highlights: ['Live music on 6th Street', 'Texas BBQ', 'River Walk'] },
+  { id: 'utah', name: 'Utah', abbreviation: 'UT', heroImage: 'https://images.unsplash.com/photo-1500534623283-312aade485b7?w=800&q=80&fit=crop', description: 'The Beehive State — red rock arches, world-class skiing, Sundance, and dramatic canyon landscapes.', destinations: ['park-city', 'moab'], budgetRange: { low: 100, high: 450 }, highlights: ['Arches NP', 'Park City skiing', 'Sundance Film Festival'] },
+  { id: 'vermont', name: 'Vermont', abbreviation: 'VT', heroImage: 'https://images.unsplash.com/photo-1472396961693-142e6e269027?w=800&q=80&fit=crop', description: 'The Green Mountain State — fall foliage, covered bridges, craft cider, farm-to-table everything, and skiing.', destinations: ['stowe', 'burlington'], budgetRange: { low: 120, high: 400 }, highlights: ['Fall foliage', 'Stowe skiing', 'Craft breweries'] },
+  { id: 'virginia', name: 'Virginia', abbreviation: 'VA', heroImage: 'https://images.unsplash.com/photo-1569317002804-ab77bcf1bce4?w=800&q=80&fit=crop', description: 'Virginia is for Lovers — Atlantic beaches, Blue Ridge views, colonial history, and booming food scenes.', destinations: ['virginia-beach', 'richmond'], budgetRange: { low: 100, high: 400 }, highlights: ['Virginia Beach', 'Richmond food scene', 'Shenandoah Valley'] },
+  { id: 'washington', name: 'Washington', abbreviation: 'WA', heroImage: 'https://images.unsplash.com/photo-1502175353174-a7a70e73b362?w=800&q=80&fit=crop', description: 'The Evergreen State — Seattle coffee culture, Pike Place Market, island-hopping, and mountain views.', destinations: ['seattle', 'san-juan-islands'], budgetRange: { low: 130, high: 450 }, highlights: ['Pike Place Market', 'San Juan whale watching', 'Coffee culture'] },
+  { id: 'west-virginia', name: 'West Virginia', abbreviation: 'WV', heroImage: 'https://images.unsplash.com/photo-1472396961693-142e6e269027?w=800&q=80&fit=crop', description: 'Wild and Wonderful — New River Gorge, Appalachian trails, whitewater rafting, and mountain beauty.', destinations: ['harpers-ferry', 'fayetteville-wv'], budgetRange: { low: 70, high: 250 }, highlights: ['New River Gorge', 'Appalachian Trail', 'Whitewater rafting'] },
+  { id: 'wisconsin', name: 'Wisconsin', abbreviation: 'WI', heroImage: 'https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=800&q=80&fit=crop', description: 'America\'s Dairyland — cheese curds, craft beer, Great Lakes beauty, and charming peninsulas.', destinations: ['madison-wi', 'door-county'], budgetRange: { low: 90, high: 350 }, highlights: ['Door County cherries', 'Madison farmers market', 'Craft beer'] },
+  { id: 'wyoming', name: 'Wyoming', abbreviation: 'WY', heroImage: 'https://images.unsplash.com/photo-1548587977-e2e2bf0dbfb0?w=800&q=80&fit=crop', description: 'The Cowboy State — Yellowstone, the Tetons, rodeos, and vast wilderness under the biggest skies.', destinations: ['jackson-hole', 'cody'], budgetRange: { low: 100, high: 500 }, highlights: ['Yellowstone', 'Grand Tetons', 'Jackson Hole skiing'] },
+];
 
-export function getStateById(id: string): USState | undefined {
-  return states.find(s => s.id === id)
+// ─── HELPER FUNCTIONS ─────────────────────────────────────────────────
+
+export function getAllStates() {
+  return states;
 }
 
-export function getAllStates(): USState[] {
-  return states
+export function getStateById(id: string) {
+  return states.find((s) => s.id === id);
 }
