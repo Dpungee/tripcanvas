@@ -17,16 +17,23 @@ import { destinations } from '@/data/destinations'
 import {
   Clock, MapPin, CalendarDays, Trash2, GripVertical, AlertCircle,
   ChevronDown, ChevronUp, Star, DollarSign, Navigation, ExternalLink,
-  Map, Search, Route, Globe, Utensils, MessageSquare,
+  Map, Search, Route, Globe, Utensils, CheckSquare, Square,
 } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
 
 interface ItineraryTimelineProps {
   days: ItineraryDay[]
   editable?: boolean
+  checkable?: boolean
   destinationId?: string
+  startDate?: string
   onRemoveItem?: (dayIndex: number, itemId: string) => void
+}
+
+function getDayDate(startDate: string, dayNumber: number): string {
+  const d = new Date(startDate + 'T12:00:00')
+  d.setDate(d.getDate() + dayNumber - 1)
+  return d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })
 }
 
 const timeBlockColors: Record<TimeBlock, string> = {
@@ -200,9 +207,12 @@ function VenueDetailCard({ venue }: { venue: Venue }) {
   )
 }
 
-function ItineraryItemCard({ item, editable, onRemove, destinationId }: {
+function ItineraryItemCard({ item, editable, checkable, checked, onCheck, onRemove, destinationId }: {
   item: ItineraryItem
   editable?: boolean
+  checkable?: boolean
+  checked?: boolean
+  onCheck?: () => void
   onRemove?: () => void
   destinationId?: string
 }) {
@@ -211,14 +221,25 @@ function ItineraryItemCard({ item, editable, onRemove, destinationId }: {
   const venue = item.venueId ? getVenueById(item.venueId) : undefined
   const locationName = destinationId ? getLocationName(destinationId) : ''
 
-  // Google Maps link for the venue name (works even without full venue data)
   const quickMapsUrl = venue
     ? getGoogleMapsUrl(venue.name, venue.address)
     : getGoogleSearchUrl(item.title, locationName)
 
   return (
-    <div className={`relative pl-4 border-l-2 ${timeBlockColors[item.timeBlock]} py-3 group`}>
+    <div className={`relative pl-4 border-l-2 ${checked ? 'border-l-green-400 opacity-60' : timeBlockColors[item.timeBlock]} py-3 group transition-opacity`}>
       <div className="flex items-start gap-3">
+        {checkable && (
+          <button
+            onClick={onCheck}
+            className="mt-1 flex-shrink-0 text-muted-foreground hover:text-green-600 transition-colors"
+            title={checked ? 'Mark incomplete' : 'Mark done'}
+          >
+            {checked
+              ? <CheckSquare className="w-4 h-4 text-green-500" />
+              : <Square className="w-4 h-4" />
+            }
+          </button>
+        )}
         {editable && (
           <button className="mt-1 opacity-0 group-hover:opacity-100 transition-opacity cursor-grab">
             <GripVertical className="w-4 h-4 text-muted-foreground" />
@@ -252,7 +273,7 @@ function ItineraryItemCard({ item, editable, onRemove, destinationId }: {
                   href={quickMapsUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="font-semibold text-sm truncate hover:text-primary transition-colors"
+                  className={`font-semibold text-sm truncate hover:text-primary transition-colors ${checked ? 'line-through text-muted-foreground' : ''}`}
                 >
                   {item.title}
                 </a>
@@ -350,8 +371,9 @@ function ItineraryItemCard({ item, editable, onRemove, destinationId }: {
   )
 }
 
-export function ItineraryTimeline({ days, editable = false, destinationId, onRemoveItem }: ItineraryTimelineProps) {
+export function ItineraryTimeline({ days, editable = false, checkable = false, destinationId, startDate, onRemoveItem }: ItineraryTimelineProps) {
   const [expandedDays, setExpandedDays] = useState<Set<number>>(new Set(days.map((_, i) => i)))
+  const [checkedItems, setCheckedItems] = useState<Set<string>>(new Set())
 
   const toggleDay = (idx: number) => {
     setExpandedDays(prev => {
@@ -362,72 +384,107 @@ export function ItineraryTimeline({ days, editable = false, destinationId, onRem
     })
   }
 
+  const toggleCheck = (itemId: string) => {
+    setCheckedItems(prev => {
+      const next = new Set(prev)
+      if (next.has(itemId)) next.delete(itemId)
+      else next.add(itemId)
+      return next
+    })
+  }
+
   return (
     <div className="space-y-6">
-      {days.map((day, dayIdx) => (
-        <div key={day.dayNumber} className="rounded-xl border bg-card overflow-hidden shadow-sm">
-          <button
-            onClick={() => toggleDay(dayIdx)}
-            className="w-full p-4 bg-gradient-to-r from-indigo-50 to-purple-50 border-b flex items-center justify-between hover:from-indigo-100/60 hover:to-purple-100/60 transition-colors"
-          >
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center">
-                <CalendarDays className="w-5 h-5 text-primary" />
-              </div>
-              <div className="text-left">
-                <h3 className="font-semibold">Day {day.dayNumber}</h3>
-                <p className="text-sm text-muted-foreground">{day.theme}</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="text-right">
-                <p className="text-sm font-semibold">{formatCurrency(day.totalCost)}</p>
-                <p className="text-xs text-muted-foreground">{day.items.length} activities</p>
-              </div>
-              {expandedDays.has(dayIdx) ? (
-                <ChevronUp className="w-4 h-4 text-muted-foreground" />
-              ) : (
-                <ChevronDown className="w-4 h-4 text-muted-foreground" />
-              )}
-            </div>
-          </button>
+      {days.map((day, dayIdx) => {
+        const completedCount = day.items.filter(i => checkedItems.has(i.id)).length
+        const allDone = day.items.length > 0 && completedCount === day.items.length
 
-          {expandedDays.has(dayIdx) && (
-            <div className="p-4 space-y-1">
-              {day.items.map(item => (
-                <ItineraryItemCard
-                  key={item.id}
-                  item={item}
-                  editable={editable}
-                  destinationId={destinationId}
-                  onRemove={() => onRemoveItem?.(dayIdx, item.id)}
-                />
-              ))}
-              {day.items.length === 0 && (
-                <div className="text-center py-8 text-muted-foreground text-sm">
-                  <p>No activities planned yet</p>
-                  <p className="text-xs mt-1">Add activities from the destination page</p>
+        return (
+          <div key={day.dayNumber} className="rounded-xl border bg-card overflow-hidden shadow-sm">
+            <button
+              onClick={() => toggleDay(dayIdx)}
+              className={`w-full p-4 border-b flex items-center justify-between transition-colors ${
+                allDone
+                  ? 'bg-gradient-to-r from-green-50 to-emerald-50 hover:from-green-100/60 hover:to-emerald-100/60'
+                  : 'bg-gradient-to-r from-indigo-50 to-purple-50 hover:from-indigo-100/60 hover:to-purple-100/60'
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <div className={`w-10 h-10 rounded-xl shadow-sm flex items-center justify-center ${allDone ? 'bg-green-100' : 'bg-white'}`}>
+                  {allDone
+                    ? <CheckSquare className="w-5 h-5 text-green-600" />
+                    : <CalendarDays className="w-5 h-5 text-primary" />
+                  }
                 </div>
-              )}
-
-              {/* Day summary footer */}
-              <div className="mt-4 pt-3 border-t flex items-center justify-between text-xs text-muted-foreground">
-                <div className="flex items-center gap-3">
-                  {Array.from(new Set(day.items.map(i => i.category))).map(cat => (
-                    <span key={cat} className="flex items-center gap-0.5">
-                      {categoryIcons[cat as VenueCategory] || '📍'}
-                      <span className="capitalize">{cat === 'live-music' ? 'Live Music' : cat}</span>
-                    </span>
-                  ))}
+                <div className="text-left">
+                  <div className="flex items-center gap-2">
+                    <h3 className="font-semibold">Day {day.dayNumber}</h3>
+                    {startDate && (
+                      <span className="text-xs text-muted-foreground font-normal">
+                        {getDayDate(startDate, day.dayNumber)}
+                      </span>
+                    )}
+                    {checkable && completedCount > 0 && (
+                      <span className={`text-[11px] font-medium px-1.5 py-0.5 rounded-full ${allDone ? 'bg-green-100 text-green-700' : 'bg-primary/10 text-primary'}`}>
+                        {completedCount}/{day.items.length} done
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-sm text-muted-foreground">{day.theme}</p>
                 </div>
-                <span className="font-medium text-foreground">
-                  Day total: {formatCurrency(day.totalCost)}
-                </span>
               </div>
-            </div>
-          )}
-        </div>
-      ))}
+              <div className="flex items-center gap-3">
+                <div className="text-right">
+                  <p className="text-sm font-semibold">{formatCurrency(day.totalCost)}</p>
+                  <p className="text-xs text-muted-foreground">{day.items.length} activities</p>
+                </div>
+                {expandedDays.has(dayIdx) ? (
+                  <ChevronUp className="w-4 h-4 text-muted-foreground" />
+                ) : (
+                  <ChevronDown className="w-4 h-4 text-muted-foreground" />
+                )}
+              </div>
+            </button>
+
+            {expandedDays.has(dayIdx) && (
+              <div className="p-4 space-y-1">
+                {day.items.map(item => (
+                  <ItineraryItemCard
+                    key={item.id}
+                    item={item}
+                    editable={editable}
+                    checkable={checkable}
+                    checked={checkedItems.has(item.id)}
+                    onCheck={() => toggleCheck(item.id)}
+                    destinationId={destinationId}
+                    onRemove={() => onRemoveItem?.(dayIdx, item.id)}
+                  />
+                ))}
+                {day.items.length === 0 && (
+                  <div className="text-center py-8 text-muted-foreground text-sm">
+                    <p>No activities planned yet</p>
+                    <p className="text-xs mt-1">Add activities from the destination page</p>
+                  </div>
+                )}
+
+                <div className="mt-4 pt-3 border-t flex items-center justify-between text-xs text-muted-foreground">
+                  <div className="flex items-center gap-3">
+                    {Array.from(new Set(day.items.map(i => i.category))).map(cat => (
+                      <span key={cat} className="flex items-center gap-0.5">
+                        {categoryIcons[cat as VenueCategory] || '📍'}
+                        <span className="capitalize">{cat === 'live-music' ? 'Live Music' : cat}</span>
+                      </span>
+                    ))}
+                  </div>
+                  <span className="font-medium text-foreground">
+                    Day total: {formatCurrency(day.totalCost)}
+                  </span>
+                </div>
+              </div>
+            )}
+          </div>
+        )
+      })}
     </div>
   )
 }
