@@ -8,6 +8,27 @@ import {
 } from '@/types'
 import { destinations } from '@/data/destinations'
 
+// ─── Custom (manually built) trip ───
+export interface CustomTripPickedItem {
+  id: string
+  venueId: string
+  dayNumber: number
+  timeBlock: 'morning' | 'afternoon' | 'evening' | 'late-night'
+  notes?: string
+}
+
+export interface CustomTripFull {
+  id: string
+  name: string
+  destinationId: string
+  startDate: string
+  groupSize: number
+  numDays: number
+  items: CustomTripPickedItem[]
+  createdAt: string
+  updatedAt: string
+}
+
 // ─── Saved trip with full data ───
 export interface SavedTripFull {
   id: string
@@ -61,6 +82,12 @@ interface AppState {
   saveTrip: (trip: SavedTripFull) => void
   deleteTrip: (id: string) => void
   updateTripName: (id: string, name: string) => void
+
+  // Custom trips
+  customTrips: CustomTripFull[]
+  saveCustomTrip: (trip: CustomTripFull) => void
+  deleteCustomTrip: (id: string) => void
+  updateCustomTrip: (trip: CustomTripFull) => void
 
   // Group trips
   groupTrips: GroupTripFull[]
@@ -179,6 +206,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [favoriteVenues, setFavVenues] = useState<string[]>([])
   const [favoriteStays, setFavStays] = useState<string[]>([])
   const [savedTrips, setSavedTrips] = useState<SavedTripFull[]>([])
+  const [customTrips, setCustomTrips] = useState<CustomTripFull[]>([])
   const [groupTrips, setGroupTrips] = useState<GroupTripFull[]>([])
   const [activeGroupTripId, setActiveGroupTripId] = useState<string | null>(null)
   const [stayBookings, setStayBookings] = useState<StayBooking[]>([])
@@ -193,6 +221,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setFavVenues(loadFromStorage('favVenues', ['v-miami-4', 'v-nash-1', 'v-miami-1', 'v-nash-8', 'v-sed-2']))
     setFavStays(loadFromStorage('favStays', []))
     setSavedTrips(loadFromStorage('savedTrips', defaultSavedTrips))
+    setCustomTrips(loadFromStorage('customTrips', []))
     setGroupTrips(loadFromStorage('groupTrips', [defaultGroupTrip]))
     setActiveGroupTripId(loadFromStorage('activeGroupTrip', 'group-demo-1'))
     setStayBookings(loadFromStorage('stayBookings', []))
@@ -206,6 +235,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   useEffect(() => { if (loaded) saveToStorage('favVenues', favoriteVenues) }, [favoriteVenues, loaded])
   useEffect(() => { if (loaded) saveToStorage('favStays', favoriteStays) }, [favoriteStays, loaded])
   useEffect(() => { if (loaded) saveToStorage('savedTrips', savedTrips) }, [savedTrips, loaded])
+  useEffect(() => { if (loaded) saveToStorage('customTrips', customTrips) }, [customTrips, loaded])
   useEffect(() => { if (loaded) saveToStorage('groupTrips', groupTrips) }, [groupTrips, loaded])
   useEffect(() => { if (loaded) saveToStorage('activeGroupTrip', activeGroupTripId) }, [activeGroupTripId, loaded])
   useEffect(() => { if (loaded) saveToStorage('stayBookings', stayBookings) }, [stayBookings, loaded])
@@ -243,6 +273,28 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const updateTripName = useCallback((id: string, name: string) => {
     setSavedTrips(prev => prev.map(t => t.id === id ? { ...t, name, updatedAt: new Date().toISOString() } : t))
+  }, [])
+
+  // ─── Custom trips ───
+  const saveCustomTrip = useCallback((trip: CustomTripFull) => {
+    setCustomTrips(prev => {
+      const exists = prev.findIndex(t => t.id === trip.id)
+      if (exists >= 0) {
+        const updated = [...prev]
+        updated[exists] = { ...trip, updatedAt: new Date().toISOString() }
+        return updated
+      }
+      return [trip, ...prev]
+    })
+    setRecentActivity(prev => [{ action: `Saved "${trip.name}"`, timestamp: 'Just now', icon: '🗺️' }, ...prev.slice(0, 19)])
+  }, [])
+
+  const deleteCustomTrip = useCallback((id: string) => {
+    setCustomTrips(prev => prev.filter(t => t.id !== id))
+  }, [])
+
+  const updateCustomTrip = useCallback((trip: CustomTripFull) => {
+    setCustomTrips(prev => prev.map(t => t.id === trip.id ? { ...trip, updatedAt: new Date().toISOString() } : t))
   }, [])
 
   // ─── Group trips ───
@@ -355,6 +407,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       isFavoriteVenue: (id) => favoriteVenues.includes(id),
       isFavoriteStay: (id) => favoriteStays.includes(id),
       savedTrips, saveTrip, deleteTrip, updateTripName,
+      customTrips, saveCustomTrip, deleteCustomTrip, updateCustomTrip,
       groupTrips, activeGroupTrip, createGroupTrip, setActiveGroupTrip,
       addTraveler, removeTraveler, castVote, addGroupNote, setGroupDestination,
       stayBookings, venueReservations, addStayBooking, cancelStayBooking, addVenueReservation, cancelVenueReservation,
