@@ -1,16 +1,21 @@
 'use client'
 
 import Link from 'next/link'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { MapPin, Menu, X, Compass, Heart, Users, Calendar } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useApp } from '@/lib/store'
 
 export function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [mounted, setMounted] = useState(false)
   const app = useApp()
   const savedCount = app.savedTrips.length
   const favCount = app.favoriteDestinations.length
+
+  useEffect(() => { setMounted(true) }, [])
+
+  const totalCount = mounted ? savedCount + favCount : 0
 
   return (
     <nav className="sticky top-0 z-50 glass border-b">
@@ -39,9 +44,9 @@ export function Navbar() {
             <Link href="/saved" className="relative px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground rounded-lg hover:bg-accent transition-colors flex items-center gap-1.5">
               <Heart className="w-4 h-4" />
               Saved
-              {(savedCount + favCount) > 0 && (
+              {totalCount > 0 && (
                 <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] rounded-full bg-primary text-white text-[10px] font-bold flex items-center justify-center px-1">
-                  {savedCount + favCount}
+                  {totalCount}
                 </span>
               )}
             </Link>
@@ -65,7 +70,7 @@ export function Navbar() {
             <Link href="/planner" onClick={() => setMobileOpen(false)} className="block px-3 py-2.5 text-sm font-medium rounded-lg hover:bg-accent transition-colors">Plan a Trip</Link>
             <Link href="/group" onClick={() => setMobileOpen(false)} className="block px-3 py-2.5 text-sm font-medium rounded-lg hover:bg-accent transition-colors">Group Planning</Link>
             <Link href="/saved" onClick={() => setMobileOpen(false)} className="block px-3 py-2.5 text-sm font-medium rounded-lg hover:bg-accent transition-colors">
-              Saved Trips {(savedCount + favCount) > 0 && `(${savedCount + favCount})`}
+              Saved Trips {totalCount > 0 && `(${totalCount})`}
             </Link>
             <div className="pt-3 border-t flex gap-2">
               <Button variant="outline" size="sm" className="flex-1">Sign In</Button>
