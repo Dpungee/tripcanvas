@@ -1,0 +1,234 @@
+// TripCanvas Database Schema
+// This schema defines the data model for PostgreSQL / Supabase
+// Currently using mock data, but ready for real DB integration
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String      @id @default(cuid())
+  email         String      @unique
+  name          String?
+  avatar        String?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  savedTrips    SavedTrip[]
+  travelers     Traveler[]
+  favorites     Favorite[]
+  votes         Vote[]
+  notes         Note[]
+}
+
+model State {
+  id           String        @id
+  name         String
+  abbreviation String        @unique
+  heroImage    String
+  description  String
+  budgetLow    Float
+  budgetHigh   Float
+  highlights   String[]
+  destinations Destination[]
+}
+
+model Destination {
+  id               String    @id
+  name             String
+  stateId          String
+  state            State     @relation(fields: [stateId], references: [id])
+  heroImage        String
+  description      String    @db.Text
+  tags             String[]
+  avgDailyBudget   Float
+  bestMonths       String[]
+  nightlifeRating  Float
+  foodRating       Float
+  relaxationRating Float
+  avgTemp          String?
+  timezone         String?
+  nearestAirport   String?
+  venues           Venue[]
+  stays            Stay[]
+  itineraries      Itinerary[]
+  savedTrips       SavedTrip[]
+  favorites        Favorite[]
+}
+
+model Venue {
+  id            String    @id @default(cuid())
+  destinationId String
+  destination   Destination @relation(fields: [destinationId], references: [id])
+  name          String
+  category      String    // restaurant, bar, club, museum, spa, outdoor, tour, rooftop, live-music, brunch, event, shopping
+  subcategory   String?
+  description   String    @db.Text
+  priceLevel    String    // $, $$, $$$, $$$$
+  avgPrice      Float?
+  rating        Float
+  neighborhood  String
+  address       String
+  hours         String
+  bookingUrl    String?
+  tags          String[]
+  imageUrl      String
+  itineraryItems ItineraryItem[]
+  favorites      Favorite[]
+  votes          Vote[]
+}
+
+model Stay {
+  id            String    @id @default(cuid())
+  destinationId String
+  destination   Destination @relation(fields: [destinationId], references: [id])
+  name          String
+  type          String    // hotel, resort, airbnb, villa, cabin, penthouse
+  nightlyPrice  Float
+  maxGuests     Int
+  location      String
+  amenities     String[]
+  rating        Float
+  imageUrl      String
+  vibeTags      String[]
+  description   String    @db.Text
+  favorites     Favorite[]
+  votes         Vote[]
+}
+
+model Itinerary {
+  id            String         @id @default(cuid())
+  destinationId String
+  destination   Destination    @relation(fields: [destinationId], references: [id])
+  tripType      String
+  vibes         String[]
+  budgetTier    String
+  groupSize     Int
+  totalCost     Float
+  perPersonCost Float
+  createdAt     DateTime       @default(now())
+  days          ItineraryDay[]
+  savedTrip     SavedTrip?
+  groupTrip     GroupTrip?     @relation(fields: [groupTripId], references: [id])
+  groupTripId   String?
+}
+
+model ItineraryDay {
+  id          String          @id @default(cuid())
+  itineraryId String
+  itinerary   Itinerary       @relation(fields: [itineraryId], references: [id], onDelete: Cascade)
+  dayNumber   Int
+  theme       String
+  totalCost   Float
+  items       ItineraryItem[]
+}
+
+model ItineraryItem {
+  id                String       @id @default(cuid())
+  dayId             String
+  day               ItineraryDay @relation(fields: [dayId], references: [id], onDelete: Cascade)
+  title             String
+  venueId           String?
+  venue             Venue?       @relation(fields: [venueId], references: [id])
+  timeBlock         String       // morning, afternoon, evening, late-night
+  startTime         String
+  endTime           String
+  costEstimate      Float
+  travelTime        String?
+  reservationNeeded Boolean      @default(false)
+  notes             String?      @db.Text
+  category          String
+  sortOrder         Int          @default(0)
+}
+
+model SavedTrip {
+  id            String    @id @default(cuid())
+  userId        String
+  user          User      @relation(fields: [userId], references: [id])
+  name          String
+  destinationId String
+  destination   Destination @relation(fields: [destinationId], references: [id])
+  itineraryId   String    @unique
+  itinerary     Itinerary @relation(fields: [itineraryId], references: [id])
+  tripType      String
+  groupSize     Int
+  totalBudget   Float
+  perPerson     Float
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model GroupTrip {
+  id          String      @id @default(cuid())
+  name        String
+  travelers   Traveler[]
+  votes       Vote[]
+  notes       Note[]
+  itineraries Itinerary[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+model Traveler {
+  id              String    @id @default(cuid())
+  userId          String?
+  user            User?     @relation(fields: [userId], references: [id])
+  groupTripId     String
+  groupTrip       GroupTrip @relation(fields: [groupTripId], references: [id], onDelete: Cascade)
+  name            String
+  avatar          String?
+  vibePreferences String[]
+  budgetPreference String
+  votes           Vote[]
+  notes           Note[]
+}
+
+model Vote {
+  id         String    @id @default(cuid())
+  travelerId String
+  traveler   Traveler  @relation(fields: [travelerId], references: [id], onDelete: Cascade)
+  userId     String?
+  user       User?     @relation(fields: [userId], references: [id])
+  groupTripId String
+  groupTrip  GroupTrip @relation(fields: [groupTripId], references: [id], onDelete: Cascade)
+  targetType String    // destination, venue, stay
+  venueId    String?
+  venue      Venue?    @relation(fields: [venueId], references: [id])
+  stayId     String?
+  stay       Stay?     @relation(fields: [stayId], references: [id])
+  value      String    // up, down
+  createdAt  DateTime  @default(now())
+}
+
+model Note {
+  id          String    @id @default(cuid())
+  travelerId  String
+  traveler    Traveler  @relation(fields: [travelerId], references: [id], onDelete: Cascade)
+  userId      String?
+  user        User?     @relation(fields: [userId], references: [id])
+  groupTripId String
+  groupTrip   GroupTrip @relation(fields: [groupTripId], references: [id], onDelete: Cascade)
+  content     String    @db.Text
+  createdAt   DateTime  @default(now())
+}
+
+model Favorite {
+  id            String       @id @default(cuid())
+  userId        String
+  user          User         @relation(fields: [userId], references: [id])
+  destinationId String?
+  destination   Destination? @relation(fields: [destinationId], references: [id])
+  venueId       String?
+  venue         Venue?       @relation(fields: [venueId], references: [id])
+  stayId        String?
+  stay          Stay?        @relation(fields: [stayId], references: [id])
+  createdAt     DateTime     @default(now())
+
+  @@unique([userId, destinationId])
+  @@unique([userId, venueId])
+  @@unique([userId, stayId])
+}
