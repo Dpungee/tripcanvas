@@ -4,6 +4,7 @@ import { createContext, useContext, useState, useCallback, useEffect, ReactNode 
 import {
   SavedTrip, Itinerary, BudgetBreakdown, GroupTrip, Traveler, Vote,
   GroupNote, BudgetSplit, TripType, Vibe, BudgetTier, Destination, Venue, Stay,
+  StayBooking, VenueReservation,
 } from '@/types'
 import { destinations } from '@/data/destinations'
 
@@ -71,6 +72,14 @@ interface AppState {
   castVote: (destId: string, travelerId: string, value: 'up' | 'down') => void
   addGroupNote: (travelerId: string, content: string) => void
   setGroupDestination: (destId: string) => void
+
+  // Bookings
+  stayBookings: StayBooking[]
+  venueReservations: VenueReservation[]
+  addStayBooking: (booking: StayBooking) => void
+  cancelStayBooking: (id: string) => void
+  addVenueReservation: (res: VenueReservation) => void
+  cancelVenueReservation: (id: string) => void
 
   // Recent activity
   recentActivity: { action: string; timestamp: string; icon: string }[]
@@ -172,6 +181,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [savedTrips, setSavedTrips] = useState<SavedTripFull[]>([])
   const [groupTrips, setGroupTrips] = useState<GroupTripFull[]>([])
   const [activeGroupTripId, setActiveGroupTripId] = useState<string | null>(null)
+  const [stayBookings, setStayBookings] = useState<StayBooking[]>([])
+  const [venueReservations, setVenueReservations] = useState<VenueReservation[]>([])
   const [recentActivity, setRecentActivity] = useState<{ action: string; timestamp: string; icon: string }[]>([])
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [loaded, setLoaded] = useState(false)
@@ -184,6 +195,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setSavedTrips(loadFromStorage('savedTrips', defaultSavedTrips))
     setGroupTrips(loadFromStorage('groupTrips', [defaultGroupTrip]))
     setActiveGroupTripId(loadFromStorage('activeGroupTrip', 'group-demo-1'))
+    setStayBookings(loadFromStorage('stayBookings', []))
+    setVenueReservations(loadFromStorage('venueReservations', []))
     setRecentActivity(loadFromStorage('activity', defaultActivity))
     setLoaded(true)
   }, [])
@@ -195,6 +208,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
   useEffect(() => { if (loaded) saveToStorage('savedTrips', savedTrips) }, [savedTrips, loaded])
   useEffect(() => { if (loaded) saveToStorage('groupTrips', groupTrips) }, [groupTrips, loaded])
   useEffect(() => { if (loaded) saveToStorage('activeGroupTrip', activeGroupTripId) }, [activeGroupTripId, loaded])
+  useEffect(() => { if (loaded) saveToStorage('stayBookings', stayBookings) }, [stayBookings, loaded])
+  useEffect(() => { if (loaded) saveToStorage('venueReservations', venueReservations) }, [venueReservations, loaded])
   useEffect(() => { if (loaded) saveToStorage('activity', recentActivity) }, [recentActivity, loaded])
 
   // ─── Favorites ───
@@ -298,6 +313,25 @@ export function AppProvider({ children }: { children: ReactNode }) {
     ))
   }, [activeGroupTripId])
 
+  // ─── Bookings ───
+  const addStayBooking = useCallback((booking: StayBooking) => {
+    setStayBookings(prev => [booking, ...prev])
+    setRecentActivity(prev => [{ action: `Booked ${booking.stayName}`, timestamp: 'Just now', icon: '🏨' }, ...prev.slice(0, 19)])
+  }, [])
+
+  const cancelStayBooking = useCallback((id: string) => {
+    setStayBookings(prev => prev.map(b => b.id === id ? { ...b, status: 'cancelled' as const } : b))
+  }, [])
+
+  const addVenueReservation = useCallback((res: VenueReservation) => {
+    setVenueReservations(prev => [res, ...prev])
+    setRecentActivity(prev => [{ action: `Reserved table at ${res.venueName}`, timestamp: 'Just now', icon: '🍽️' }, ...prev.slice(0, 19)])
+  }, [])
+
+  const cancelVenueReservation = useCallback((id: string) => {
+    setVenueReservations(prev => prev.map(r => r.id === id ? { ...r, status: 'cancelled' as const } : r))
+  }, [])
+
   // ─── Activity ───
   const addActivity = useCallback((action: string, icon: string) => {
     setRecentActivity(prev => [{ action, timestamp: 'Just now', icon }, ...prev.slice(0, 19)])
@@ -323,6 +357,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       savedTrips, saveTrip, deleteTrip, updateTripName,
       groupTrips, activeGroupTrip, createGroupTrip, setActiveGroupTrip,
       addTraveler, removeTraveler, castVote, addGroupNote, setGroupDestination,
+      stayBookings, venueReservations, addStayBooking, cancelStayBooking, addVenueReservation, cancelVenueReservation,
       recentActivity, addActivity,
       notifications, notify, dismissNotification,
     }}>

@@ -313,3 +313,44 @@ export const categoryIcons: Record<VenueCategory, string> = {
   event: '🎪',
   shopping: '🛍️',
 }
+
+// ============================================
+// Booking Models
+// ============================================
+
+export interface StayBooking {
+  id: string
+  confirmationCode: string
+  stayId: string
+  stayName: string
+  stayType: StayType
+  destinationId: string
+  destinationName: string
+  imageUrl: string
+  location: string
+  checkIn: string
+  checkOut: string
+  guests: number
+  nights: number
+  nightlyPrice: number
+  totalPrice: number
+  status: 'confirmed' | 'cancelled'
+  bookedAt: string
+}
+
+export interface VenueReservation {
+  id: string
+  confirmationCode: string
+  venueId: string
+  venueName: string
+  venueCategory: VenueCategory
+  destinationId: string
+  destinationName: string
+  imageUrl: string
+  date: string
+  time: string
+  partySize: number
+  specialRequests: string
+  status: 'confirmed' | 'cancelled'
+  bookedAt: string
+}

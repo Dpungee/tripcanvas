@@ -10,6 +10,13 @@ A Next.js travel planning application migrated from Vercel to Replit.
 - **Forms**: React Hook Form + Zod
 - **Language**: TypeScript
 
+## Key Features
+
+- **Booking flow** — "Book Now" on stay cards opens a multi-step modal (dates → payment → confirmation) with a generated confirmation code
+- **Reservation flow** — "Reserve a Table" on restaurant/bar/venue cards opens a reservation modal (date, time slot, party size, special requests)
+- All bookings/reservations saved to localStorage and viewable in Saved → Bookings tab
+- Bookings can be cancelled from the Bookings tab
+
 ## Project Structure
 
 - `src/app/` — Next.js App Router pages and layouts
