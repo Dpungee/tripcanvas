@@ -200,6 +200,22 @@ export interface Traveler {
   avatar: string
   vibePreferences: Vibe[]
   budgetPreference: BudgetTier
+  budgetLimit?: number
+}
+
+export interface Poll {
+  id: string
+  question: string
+  options: PollOption[]
+  createdBy: string
+  closed: boolean
+  createdAt: string
+}
+
+export interface PollOption {
+  id: string
+  text: string
+  votes: string[]
 }
 
 export interface GroupTrip {

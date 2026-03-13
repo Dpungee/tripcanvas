@@ -4,6 +4,7 @@ import { createContext, useContext, useState, useCallback, useEffect, ReactNode 
 import {
   SavedTrip, Itinerary, BudgetBreakdown, GroupTrip, Traveler, Vote,
   GroupNote, BudgetSplit, TripType, Vibe, BudgetTier, Destination, Venue, Stay,
+  Poll, PollOption,
 } from '@/types'
 import { destinations } from '@/data/destinations'
 
@@ -31,6 +32,7 @@ export interface GroupTripFull {
   travelers: Traveler[]
   votes: Record<string, Record<string, 'up' | 'down'>> // destId -> { travelerId -> vote }
   notes: { id: string; travelerId: string; content: string; createdAt: string }[]
+  polls: Poll[]
   budgetTotal: number
   createdAt: string
 }
@@ -71,6 +73,13 @@ interface AppState {
   castVote: (destId: string, travelerId: string, value: 'up' | 'down') => void
   addGroupNote: (travelerId: string, content: string) => void
   setGroupDestination: (destId: string) => void
+  createPoll: (question: string, options: string[]) => void
+  votePoll: (pollId: string, optionId: string, travelerId: string) => void
+  closePoll: (pollId: string) => void
+  deletePoll: (pollId: string) => void
+  setTravelerBudgetLimit: (travelerId: string, limit: number) => void
+  generateInviteCode: () => string
+  joinTripFromCode: (code: string, guestName: string) => boolean
 
   // Recent activity
   recentActivity: { action: string; timestamp: string; icon: string }[]
@@ -154,6 +163,15 @@ const defaultGroupTrip: GroupTripFull = {
     { id: 'n2', travelerId: 't2', content: 'Nashville could be fun too — the honky tonks are so much fun for groups!', createdAt: '1 hour ago' },
     { id: 'n3', travelerId: 't3', content: "I'm down for wherever but would love some good food options.", createdAt: '30 min ago' },
   ],
+  polls: [
+    {
+      id: 'poll-demo-1', question: 'Hotel or Airbnb?', createdBy: 'me', closed: false, createdAt: '1 hour ago',
+      options: [
+        { id: 'opt-0', text: 'Hotel', votes: ['me', 't2'] },
+        { id: 'opt-1', text: 'Airbnb', votes: ['t3', 't4'] },
+      ],
+    },
+  ],
   budgetTotal: 4800,
   createdAt: '2026-03-10T08:00:00Z',
 }
@@ -236,7 +254,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     const trip: GroupTripFull = {
       id, name, destinationId: null,
       travelers: [{ id: 'me', name: 'You (Host)', avatar: '👑', vibePreferences: ['party', 'foodie'], budgetPreference: 'mid' }],
-      votes: {}, notes: [], budgetTotal: 0, createdAt: new Date().toISOString(),
+      votes: {}, notes: [], polls: [], budgetTotal: 0, createdAt: new Date().toISOString(),
     }
     setGroupTrips(prev => [trip, ...prev])
     setActiveGroupTripId(id)
@@ -298,6 +316,117 @@ export function AppProvider({ children }: { children: ReactNode }) {
     ))
   }, [activeGroupTripId])
 
+  // ─── Polls ───
+  const createPoll = useCallback((question: string, options: string[]) => {
+    if (!activeGroupTripId) return
+    const poll: Poll = {
+      id: `poll-${Date.now()}`,
+      question,
+      options: options.map((text, i) => ({ id: `opt-${i}`, text, votes: [] })),
+      createdBy: 'me',
+      closed: false,
+      createdAt: 'Just now',
+    }
+    setGroupTrips(prev => prev.map(g =>
+      g.id === activeGroupTripId ? { ...g, polls: [...(g.polls || []), poll] } : g
+    ))
+  }, [activeGroupTripId])
+
+  const votePoll = useCallback((pollId: string, optionId: string, travelerId: string) => {
+    if (!activeGroupTripId) return
+    setGroupTrips(prev => prev.map(g => {
+      if (g.id !== activeGroupTripId) return g
+      return {
+        ...g,
+        polls: (g.polls || []).map(p => {
+          if (p.id !== pollId || p.closed) return p
+          return {
+            ...p,
+            options: p.options.map(opt => {
+              const without = opt.votes.filter(v => v !== travelerId)
+              if (opt.id === optionId) {
+                // Toggle: if already voted, remove; otherwise add
+                return { ...opt, votes: opt.votes.includes(travelerId) ? without : [...without, travelerId] }
+              }
+              return { ...opt, votes: without }
+            }),
+          }
+        }),
+      }
+    }))
+  }, [activeGroupTripId])
+
+  const closePoll = useCallback((pollId: string) => {
+    if (!activeGroupTripId) return
+    setGroupTrips(prev => prev.map(g =>
+      g.id === activeGroupTripId
+        ? { ...g, polls: (g.polls || []).map(p => p.id === pollId ? { ...p, closed: true } : p) }
+        : g
+    ))
+  }, [activeGroupTripId])
+
+  const deletePoll = useCallback((pollId: string) => {
+    if (!activeGroupTripId) return
+    setGroupTrips(prev => prev.map(g =>
+      g.id === activeGroupTripId
+        ? { ...g, polls: (g.polls || []).filter(p => p.id !== pollId) }
+        : g
+    ))
+  }, [activeGroupTripId])
+
+  // ─── Budget Limits ───
+  const setTravelerBudgetLimit = useCallback((travelerId: string, limit: number) => {
+    if (!activeGroupTripId) return
+    setGroupTrips(prev => prev.map(g =>
+      g.id === activeGroupTripId
+        ? { ...g, travelers: g.travelers.map(t => t.id === travelerId ? { ...t, budgetLimit: limit } : t) }
+        : g
+    ))
+  }, [activeGroupTripId])
+
+  // ─── Invite System ───
+  const generateInviteCode = useCallback((): string => {
+    if (!activeGroupTrip) return ''
+    const payload = { tripId: activeGroupTrip.id, tripName: activeGroupTrip.name, t: Date.now().toString(36) }
+    return btoa(JSON.stringify(payload))
+  }, [activeGroupTrip])
+
+  const joinTripFromCode = useCallback((code: string, guestName: string): boolean => {
+    try {
+      const payload = JSON.parse(atob(code))
+      const { tripId, tripName } = payload
+      if (!tripId || !tripName) return false
+
+      const emojis = ['🎉', '🌟', '🔥', '🎪', '🎯', '💫', '🚀', '🌈', '⚡', '🎶']
+      const newTraveler: Traveler = {
+        id: `t-${Date.now()}`, name: guestName,
+        avatar: emojis[Math.floor(Math.random() * emojis.length)] || '🎉',
+        vibePreferences: ['chill'], budgetPreference: 'mid',
+      }
+
+      setGroupTrips(prev => {
+        const existing = prev.find(g => g.id === tripId)
+        if (existing) {
+          return prev.map(g => g.id === tripId ? { ...g, travelers: [...g.travelers, newTraveler] } : g)
+        }
+        // Create a new trip shell from the invite
+        const trip: GroupTripFull = {
+          id: tripId, name: tripName, destinationId: null,
+          travelers: [
+            { id: 'host', name: 'Host', avatar: '👑', vibePreferences: ['party'], budgetPreference: 'mid' },
+            newTraveler,
+          ],
+          votes: {}, notes: [], polls: [], budgetTotal: 0, createdAt: new Date().toISOString(),
+        }
+        return [trip, ...prev]
+      })
+      setActiveGroupTripId(tripId)
+      return true
+    } catch {
+      return false
+    }
+  }, [])
+
   // ─── Activity ───
   const addActivity = useCallback((action: string, icon: string) => {
     setRecentActivity(prev => [{ action, timestamp: 'Just now', icon }, ...prev.slice(0, 19)])
@@ -323,6 +452,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
       savedTrips, saveTrip, deleteTrip, updateTripName,
       groupTrips, activeGroupTrip, createGroupTrip, setActiveGroupTrip,
       addTraveler, removeTraveler, castVote, addGroupNote, setGroupDestination,
+      createPoll, votePoll, closePoll, deletePoll,
+      setTravelerBudgetLimit, generateInviteCode, joinTripFromCode,
       recentActivity, addActivity,
       notifications, notify, dismissNotification,
     }}>
